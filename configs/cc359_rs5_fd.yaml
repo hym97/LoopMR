@@ -1,0 +1,56 @@
+# LoopMR on CC359 (12-channel brain): looped SDUM-Restormer, 5 adjacent slices, 4 latents. FD training from scratch: 12 loops per step,
+# gradient through all 12, only the final output scored, evaluated at 12 loops.
+# Schedule = PromptMR+'s CC359 schedule: 146,640 steps (its 20 epochs x the 47 training volumes' slices), learning rate x0.1 at 139,308.
+# Data: PromptMR+'s split (configs/splits/cc359_promptmr.json): train 47 / val 10 / test 10 volumes. Training validates on the val
+#   volumes, loopmri.evaluate reports the test volumes. Released weights: weights/cc359_rs5_fd_146k.pt (see the README for how they
+#   were trained). They were trained on the same 47 volumes and are the last step, so the validation volumes do not affect them.
+run_name: cc359_rs5_fd
+runs_root: runs                     # relative paths are relative to the repo
+seed: 0
+
+data:
+  name: cc359
+  index: data/cc359/index_12ch.json     # per-volume folder / shape / max / scored slices
+  masks_dir: data/cc359/masks           # R{5,10}_218x{kz}.npy Poisson-disc banks
+  split_json: configs/splits/cc359_promptmr.json                     # PromptMR+'s split: train 47 / val 10 / test 10
+  accelerations: [5, 10]
+  acs_radius: 16                                                     # fully sampled central disc of the masks
+  num_adj_slices: 5
+  num_workers: 4
+
+model:
+  num_adj_slices: 5          # must equal data.num_adj_slices
+  n_latent: 4                # carried latent images (PromptMR+ carries 1)
+  alpha_init: 0.5            # step size alpha (learned)
+  dc_weight_init: 1.0        # soft data-consistency weight (learned)
+  rsdum:
+    channels: [128, 256]     # SDUM: [256, 512]; everything else at SDUM's defaults (block.py)
+
+loops:
+  train: {dist: fixed, value: 12}   # every training step runs 12 loops
+  loss_window: 12            # all 12 loops carry gradient (full backprop)
+  eval_loops: 12             # loops at validation / test
+  eval_loop_sweep: [4, 8, 12, 16, 24, 32, 48]  # extra validation at the end of training
+
+loss:
+  loops: last                # only the final output is scored
+
+optim:
+  lr: 3.0e-4
+  sens_lr: 1.0e-4            # sensitivity estimator (PromptMR+'s own lr; at 3e-4 it collapsed to zero maps)
+  weight_decay: 0.01         # AdamW
+  warmup_steps: 500
+  step_size: 139308
+  gamma: 0.1
+  grad_clip: 0.01            # gradient-norm clip (PromptMR+'s / Restormer's official value)
+
+train:
+  max_steps: 146640
+  amp: true                  # bf16 autocast inside the block
+  compile_block: default     # torch.compile the block (same weights; set to null to run eager)
+  checkpoint_block: true     # recompute the block in backward: same gradients, activation memory of one block call
+  log_every: 50
+  val_every: 5000
+  ckpt_every: 1000
+  keep_steps: [139000]
+  max_nonfinite: 50

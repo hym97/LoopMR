@@ -1,0 +1,48 @@
+# PromptMR+ on Calgary-Campinas (CC359) brain, the baseline of the paper's tables: the AUTHORS' released weights
+#   (huggingface.co/hellopipu/PromptMR, weights/cc-brain/promptmr-plus-epoch=19-step=120320.ckpt; trained on the CC359 train set only).
+# Evaluation config only. weights/promptmr_plus/cc359_promptmr_plus_released.pt is made from the authors' file on first use
+#   (loopmri/promptmr_plus.py: download, hyper-parameters checked against the model block below, strict load).
+# Data = configs/cc359_rs5_fd.yaml's; results = loopmri.evaluate on PromptMR+'s 10 test volumes (Calgary-Campinas challenge metric).
+run_name: cc359_promptmr_plus
+runs_root: runs
+seed: 0
+
+data:
+  name: cc359
+  index: data/cc359/index_12ch.json     # per-volume folder / shape / max / scored slices
+  masks_dir: data/cc359/masks           # R{5,10}_218x{kz}.npy Poisson-disc banks
+  split_json: configs/splits/cc359_promptmr.json
+  accelerations: [5, 10]
+  acs_radius: 16                                                     # fully sampled central disc of the masks
+  num_adj_slices: 5
+  num_workers: 4
+
+model:                             # the authors' PromptMR+ (their configs; 92.86M parameters)
+  name: promptmr_plus
+  mask_type: poisson_disc               # calibration region of the sensitivity estimator (the central disc)
+  num_cascades: 12
+  num_adj_slices: 5
+  n_feat0: 48
+  feature_dim: [72, 96, 120]
+  prompt_dim: [24, 48, 72]
+  sens_n_feat0: 24
+  sens_feature_dim: [36, 48, 60]
+  sens_prompt_dim: [12, 24, 36]
+  len_prompt: [5, 5, 5]
+  prompt_size: [64, 32, 16]
+  n_enc_cab: [2, 3, 3]
+  n_dec_cab: [2, 2, 3]
+  n_skip_cab: [1, 1, 1]
+  n_bottleneck_cab: 3
+  no_use_ca: false
+  learnable_prompt: false
+  adaptive_input: true
+  n_buffer: 4
+  n_history: 11
+  use_sens_adj: true
+
+loops:
+  eval_loops: 12                   # = num_cascades: the network's output
+
+train:
+  amp: true                        # the cascades' denoisers in bf16, FFTs and data consistency in fp32

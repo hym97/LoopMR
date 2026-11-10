@@ -1,0 +1,48 @@
+# PromptMR+ on CMRxRecon2023 (cine / mapping), the baseline of the paper's tables: trained by us with the authors' CMRxRecon2023
+#   settings (AdamW lr 2e-4, weight decay 0.01, SSIM loss, gradient clip 0.01, batch 1, bf16, 5 adjacent time frames) on the same data
+#   and schedule as LoopMR (466,596 steps, x0.1 at 427,713). The authors' released weights were trained on P001-P120, which includes
+#   the reported patients P101-P120, so they are not used.
+# Evaluation config only. Weights: weights/promptmr_plus/cmr23_promptmr_plus_466k.pt (step 466,596, the last).
+# Data = configs/cmr23_rs5_fd.yaml's; results = loopmri.evaluate on the 76 val files, every file at x4 / x8 / x10 (CMRxRecon2023
+#   ranking protocol).
+run_name: cmr23_promptmr_plus
+runs_root: runs
+seed: 0
+
+data:
+  name: cmr23
+  root: data/cmrxrecon2023/h5   # train / val folders of PromptMR+'s h5 files
+  accelerations: [4, 8, 10]
+  balance: upstream          # training files repeated by type: T1map x2, T2map x5, cine_lax x3, cine_sax x1
+  num_adj_slices: 5
+  num_workers: 4
+
+model:                             # the authors' PromptMR+ (their configs; 92.86M parameters)
+  name: promptmr_plus
+  mask_type: cartesian               # calibration region of the sensitivity estimator (the fully sampled central lines)
+  num_cascades: 12
+  num_adj_slices: 5
+  n_feat0: 48
+  feature_dim: [72, 96, 120]
+  prompt_dim: [24, 48, 72]
+  sens_n_feat0: 24
+  sens_feature_dim: [36, 48, 60]
+  sens_prompt_dim: [12, 24, 36]
+  len_prompt: [5, 5, 5]
+  prompt_size: [64, 32, 16]
+  n_enc_cab: [2, 3, 3]
+  n_dec_cab: [2, 2, 3]
+  n_skip_cab: [1, 1, 1]
+  n_bottleneck_cab: 3
+  no_use_ca: false
+  learnable_prompt: false
+  adaptive_input: true
+  n_buffer: 4
+  n_history: 11
+  use_sens_adj: true
+
+loops:
+  eval_loops: 12                   # = num_cascades: the network's output
+
+train:
+  amp: true                        # the cascades' denoisers in bf16, FFTs and data consistency in fp32

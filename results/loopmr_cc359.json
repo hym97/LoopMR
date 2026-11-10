@@ -1,0 +1,278 @@
+{
+ "ckpt": "weights/cc359_rs5_fd_146k.pt",
+ "ckpt_step": 146640,
+ "loops": [
+  12
+ ],
+ "protocol": "cc_test",
+ "metric": "Calgary-Campinas challenge (MC-MRI-Rec)",
+ "split_json": "configs/splits/cc359_promptmr.json",
+ "split": "test",
+ "results": {
+  "loops12": {
+   "x5": {
+    "mean": {
+     "challenge": {
+      "ssim": 0.9528391322291784,
+      "psnr": 37.445239178975115
+     }
+    },
+    "num_volumes": 10,
+    "volumes": {
+     "e14110s3_P59904.7.h5": {
+      "challenge": {
+       "ssim": 0.948557671456073,
+       "psnr": 37.19918753689594
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 42
+     },
+     "e14120s11_P66048.7.h5": {
+      "challenge": {
+       "ssim": 0.9486411373817794,
+       "psnr": 36.803063830415304
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 79
+     },
+     "e14258s3_P76800.7.h5": {
+      "challenge": {
+       "ssim": 0.9561144375949846,
+       "psnr": 37.59854226070708
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 18
+     },
+     "e14280s3_P44032.7.h5": {
+      "challenge": {
+       "ssim": 0.9564940104371319,
+       "psnr": 37.93248708978287
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 72
+     },
+     "e14313s5_P37888.7.h5": {
+      "challenge": {
+       "ssim": 0.9500263546659762,
+       "psnr": 37.09993593529436
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 39
+     },
+     "e14498s5_P60928.7.h5": {
+      "challenge": {
+       "ssim": 0.9538887069483752,
+       "psnr": 37.59129633562467
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 83
+     },
+     "e14531s6_P68096.7.h5": {
+      "challenge": {
+       "ssim": 0.9449914906509309,
+       "psnr": 37.17218864029519
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 98
+     },
+     "e14542s5_P52224.7.h5": {
+      "challenge": {
+       "ssim": 0.9496987768459706,
+       "psnr": 37.283437671727015
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 76
+     },
+     "e14583s3_P21504.7.h5": {
+      "challenge": {
+       "ssim": 0.9615862883952335,
+       "psnr": 38.194427797816196
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 65
+     },
+     "e14691s3_P06656.7.h5": {
+      "challenge": {
+       "ssim": 0.9583924479153285,
+       "psnr": 37.57782469119251
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 23
+     }
+    }
+   },
+   "x10": {
+    "mean": {
+     "challenge": {
+      "ssim": 0.9377094245098953,
+      "psnr": 35.12412616988766
+     }
+    },
+    "num_volumes": 10,
+    "volumes": {
+     "e14110s3_P59904.7.h5": {
+      "challenge": {
+       "ssim": 0.9328315253338243,
+       "psnr": 34.931659192288215
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 42
+     },
+     "e14120s11_P66048.7.h5": {
+      "challenge": {
+       "ssim": 0.930832046903237,
+       "psnr": 34.47572167584431
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 79
+     },
+     "e14258s3_P76800.7.h5": {
+      "challenge": {
+       "ssim": 0.9416413536485378,
+       "psnr": 35.25735501015036
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 18
+     },
+     "e14280s3_P44032.7.h5": {
+      "challenge": {
+       "ssim": 0.9442414418698712,
+       "psnr": 35.74362934411425
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 72
+     },
+     "e14313s5_P37888.7.h5": {
+      "challenge": {
+       "ssim": 0.9353250086867695,
+       "psnr": 34.8232280007209
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 39
+     },
+     "e14498s5_P60928.7.h5": {
+      "challenge": {
+       "ssim": 0.9409829597145443,
+       "psnr": 35.296081165717226
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 83
+     },
+     "e14531s6_P68096.7.h5": {
+      "challenge": {
+       "ssim": 0.9307775212917864,
+       "psnr": 35.14352416745862
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 98
+     },
+     "e14542s5_P52224.7.h5": {
+      "challenge": {
+       "ssim": 0.9352441781891395,
+       "psnr": 35.15072999246427
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 76
+     },
+     "e14583s3_P21504.7.h5": {
+      "challenge": {
+       "ssim": 0.9444441553173915,
+       "psnr": 35.49252623027739
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 65
+     },
+     "e14691s3_P06656.7.h5": {
+      "challenge": {
+       "ssim": 0.9407740541438523,
+       "psnr": 34.92680691984104
+      },
+      "n_slices": 156,
+      "slices": [
+       50,
+       206
+      ],
+      "mask_index": 23
+     }
+    }
+   }
+  }
+ },
+ "eval_seconds": 633.94580245018
+}

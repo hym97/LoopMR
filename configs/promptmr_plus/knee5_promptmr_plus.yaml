@@ -1,0 +1,49 @@
+# PromptMR+ on fastMRI knee, the baseline of the paper's tables: trained by us with the authors' knee settings (AdamW lr 1e-4, weight
+#   decay 0.01, SSIM loss, gradient clip 0.01, batch 1, bf16) on the same data and schedule as LoopMR (100,000 steps, x0.1 at 77,800).
+#   The authors' released knee weights were trained on fastMRI's full train set (973 volumes), not on LoopMR's training data, so they
+#   are not used.
+# Evaluation config only. Weights: weights/promptmr_plus/knee5_promptmr_plus_100k.pt (step 100,000, the last).
+# Data = configs/knee5_rs5_fd.yaml's; results = loopmri.evaluate on the 40 val volumes (fastMRI metrics).
+run_name: knee5_promptmr_plus
+runs_root: runs
+seed: 0
+
+data:
+  name: fastmri_knee
+  root: data/knee_pilot           # multicoil_train / multicoil_val
+  cache_dir: runs/cache/knee5          # fastmri SliceDataset file-list cache
+  accelerations: [4, 8]
+  center_fractions: [0.08, 0.04]
+  uniform_resolution: [384, 384]
+  num_adj_slices: 5
+  num_workers: 4
+
+model:                             # the authors' PromptMR+ (their configs; 92.86M parameters)
+  name: promptmr_plus
+  mask_type: cartesian               # calibration region of the sensitivity estimator (the fully sampled central lines)
+  num_cascades: 12
+  num_adj_slices: 5
+  n_feat0: 48
+  feature_dim: [72, 96, 120]
+  prompt_dim: [24, 48, 72]
+  sens_n_feat0: 24
+  sens_feature_dim: [36, 48, 60]
+  sens_prompt_dim: [12, 24, 36]
+  len_prompt: [5, 5, 5]
+  prompt_size: [64, 32, 16]
+  n_enc_cab: [2, 3, 3]
+  n_dec_cab: [2, 2, 3]
+  n_skip_cab: [1, 1, 1]
+  n_bottleneck_cab: 3
+  no_use_ca: false
+  learnable_prompt: false
+  adaptive_input: true
+  n_buffer: 4
+  n_history: 11
+  use_sens_adj: true
+
+loops:
+  eval_loops: 12                   # = num_cascades: the network's output
+
+train:
+  amp: true                        # the cascades' denoisers in bf16, FFTs and data consistency in fp32

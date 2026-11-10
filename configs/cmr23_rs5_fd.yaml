@@ -1,0 +1,54 @@
+# LoopMR on CMRxRecon2023 (cine / mapping): looped SDUM-Restormer, 5 adjacent TIME FRAMES, 4 latents. FD training from scratch: 12
+# loops per step, gradient through all 12, only the final output scored, evaluated at 12 loops.
+# Schedule = PromptMR+'s budget: 466,596 steps (12 epochs of the type-balanced training set), x0.1 at 427,713; estimator lr 2e-4 (PromptMR+'s).
+# Data: PromptMR+'s split (P001-P100 train, P101-P120 val = the reported set), equispaced R 4 / 8 / 10 + 24 central lines; results =
+#   loopmri.evaluate on the 76 val files (CMRxRecon2023 ranking protocol). Released weights: weights/cmr23_rs5_fd_466k.pt (see the README).
+run_name: cmr23_rs5_fd
+runs_root: runs                     # relative paths are relative to the repo
+seed: 0
+
+data:
+  name: cmr23
+  root: data/cmrxrecon2023/h5   # train / val folders of PromptMR+'s h5 files
+  accelerations: [4, 8, 10]
+  balance: upstream          # training files repeated by type: T1map x2, T2map x5, cine_lax x3, cine_sax x1
+  num_adj_slices: 5
+  num_workers: 4
+
+model:
+  num_adj_slices: 5
+  n_latent: 4
+  sens_calibration: lines
+  alpha_init: 0.5
+  dc_weight_init: 1.0
+  rsdum:
+    channels: [128, 256]
+
+loops:
+  train: {dist: fixed, value: 12}
+  loss_window: 12
+  eval_loops: 12
+  eval_loop_sweep: [4, 8, 12, 16, 24, 32, 48]
+
+loss:
+  loops: last
+
+optim:
+  lr: 3.0e-4
+  sens_lr: 2.0e-4
+  weight_decay: 0.01
+  warmup_steps: 500
+  step_size: 427713
+  gamma: 0.1
+  grad_clip: 0.01
+
+train:
+  max_steps: 466596
+  amp: true
+  compile_block: default
+  checkpoint_block: true
+  log_every: 50
+  val_every: 25000
+  ckpt_every: 1000
+  keep_steps: [425000]
+  max_nonfinite: 50

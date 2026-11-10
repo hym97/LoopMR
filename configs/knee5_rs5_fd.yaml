@@ -1,0 +1,61 @@
+# LoopMR on fastMRI knee: looped SDUM-Restormer, 5 adjacent slices, 4 latents. FD training from scratch: 12 loops per step, gradient
+# through all 12, only the final output scored, evaluated at 12 loops.
+# Schedule: 100,000 steps, x0.1 at 77,800 (PromptMR+'s knee schedule scaled to this training set). The sensitivity estimator starts from
+#   a pre-fit to plain calibration maps (scripts/prefit_sens.py; the file below is the pre-fit the released model used) and is held fixed
+#   for the first 2,000 steps.
+# Data: PromptMR+'s knee data path on 159 train / 40 val volumes, both from fastMRI's multicoil val set (configs/splits/knee_pilot.json,
+#   data_prep/make_knee_pilot.py); random line masks 4x (8% centre) / 8x (4% centre); results = loopmri.evaluate on the 40 val volumes.
+# Released weights: weights/knee5_rs5_fd_100k.pt (trained with exactly this config).
+run_name: knee5_rs5_fd
+runs_root: runs                     # relative paths are relative to the repo
+seed: 0
+
+data:
+  name: fastmri_knee
+  root: data/knee_pilot           # multicoil_train / multicoil_val
+  cache_dir: runs/cache/knee5          # fastmri SliceDataset file-list cache
+  accelerations: [4, 8]
+  center_fractions: [0.08, 0.04]
+  uniform_resolution: [384, 384]
+  num_adj_slices: 5
+  num_workers: 4
+
+model:
+  num_adj_slices: 5
+  n_latent: 4
+  sens_calibration: lines    # calibrate the maps on the fully sampled central lines
+  sens_init: weights/knee5_sens_prefit/sens_plain.pt   # pre-fitted estimator (relative to the repo)
+  alpha_init: 0.5
+  dc_weight_init: 1.0
+  rsdum:
+    channels: [128, 256]
+
+loops:
+  train: {dist: fixed, value: 12}
+  loss_window: 12
+  eval_loops: 12
+  eval_loop_sweep: [4, 8, 12, 16, 24, 32, 48]
+
+loss:
+  loops: last
+
+optim:
+  lr: 3.0e-4
+  sens_lr: 1.0e-4
+  weight_decay: 0.01
+  warmup_steps: 500
+  step_size: 77800
+  gamma: 0.1
+  grad_clip: 0.01
+  sens_hold_steps: 2000      # estimator fixed for the first 2,000 steps
+
+train:
+  max_steps: 100000
+  amp: true
+  compile_block: default
+  checkpoint_block: true
+  log_every: 50
+  val_every: 10000
+  ckpt_every: 1000
+  keep_steps: [77000]
+  max_nonfinite: 50

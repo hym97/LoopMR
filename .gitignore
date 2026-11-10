@@ -1,0 +1,7 @@
+runs/
+data/
+__pycache__/
+.ipynb_checkpoints/
+.DS_Store
+weights/**/*.pt
+weights/.cache/
