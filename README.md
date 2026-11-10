@@ -140,5 +140,7 @@ with `hf download hym97/loopmri --local-dir weights`, and make PromptMR+'s CC359
 
 ## Licence
 
-The vendored PromptMR+ code (`loopmri/vendor/promptmr_plus`) is under Rutgers' non-commercial research licence, the vendored SDUM
-code is Apache-2.0, and our weights are CC BY-NC 4.0. PromptMR+'s CC359 weights are the authors' and come under their licence.
+The code in this repository is released under the Creative Commons Attribution-NonCommercial 4.0 International licence (CC BY-NC 4.0,
+see [`LICENSE`](LICENSE)), except the two vendored folders, which keep their own licences. The vendored PromptMR+ code
+(`loopmri/vendor/promptmr_plus`) is under Rutgers' non-commercial research licence and the vendored SDUM code (`loopmri/vendor/sdum`)
+is Apache-2.0. Our weights are CC BY-NC 4.0 as well. PromptMR+'s CC359 weights are the authors' and come under their licence.
