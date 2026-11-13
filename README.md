@@ -1,5 +1,7 @@
 # One Block Is Enough: LoopMR for Accelerated MRI Reconstruction
 
+[Paper (arXiv:2611.14947)](https://arxiv.org/abs/2611.14947) · [Weights](https://huggingface.co/hym97/loopmri)
+
 LoopMR reuses a single Restormer block at every iteration of an unrolled reconstruction. Besides the current image estimate, the
 block receives data-consistency inputs and latent images, and each iteration ends with a soft data-consistency step in k-space.
 The model uses 12 iterations, 4 latents and 5 adjacent slices (adjacent time frames or weightings on CMRxRecon2023), with sensitivity
@@ -137,6 +139,17 @@ volume and about 0.01 dB in these means (the paper's CMRxRecon2023 numbers were 
 `promptmr_plus/`, our knee and CMRxRecon2023 PromptMR+ models. Without internet access on the GPU machine, download them beforehand
 with `hf download hym97/loopmri --local-dir weights`, and make PromptMR+'s CC359 weights with
 `python -c "from loopmri.hub import weights_path; weights_path('weights/promptmr_plus/cc359_promptmr_plus_released.pt')"`. 
+
+## Citation
+
+```bibtex
+@article{he2026loopmr,
+  title   = {One Block Is Enough: {LoopMR} for Accelerated {MRI} Reconstruction},
+  author  = {He, Yimeng and Xie, Yibin and Zheng, Yi and Gao, Yifan and Wang, Lixia and Hsu, Yin-Chen and Wang, Yufeng and Lu, Meng and Li, Debiao and Huang, Xiuzhen},
+  journal = {arXiv preprint arXiv:2611.14947},
+  year    = {2026}
+}
+```
 
 ## Licence
 
